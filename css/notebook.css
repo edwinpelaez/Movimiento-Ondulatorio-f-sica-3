@@ -1,0 +1,2118 @@
+/* notebook.css - Estilo Editorial de Cuaderno Virtual Universitario Argollado
+   Inspirado en la Universidad Tecnológica de Pereira (UTP) - Física 3 */
+
+/* ================= VARIABLES Y TEMA CROMÁTICO ================= */
+:root {
+  --desk-bg-deep: #130a26;
+  --desk-bg-gradient: radial-gradient(circle at 50% 20%, #2b174d 0%, #150a2b 55%, #0b0416 100%);
+
+  /* Cuaderno y Papel */
+  --paper-bg-light: #ffffff;
+  --paper-bg-lined: #fbfcfe;
+  --paper-line-blue: rgba(186, 215, 245, 0.45);
+  --paper-margin-red: rgba(239, 68, 68, 0.4);
+  --paper-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 5px 20px rgba(0, 0, 0, 0.45);
+
+  /* Espiral Argollado Metálico */
+  --ring-metal-base: #94a3b8;
+  --ring-highlight: #f8fafc;
+  --ring-shadow: #1e293b;
+  --ring-purple-tint: #7c3aed;
+  --punch-hole-bg: #140b24;
+
+  /* Colores de Marca y Editorial */
+  --brand-purple: #6d28d9;
+  --brand-purple-dark: #4c1d95;
+  --brand-purple-light: #a78bfa;
+  --brand-blue: #0284c7;
+  --brand-cyan: #38bdf8;
+
+  /* CÓDIGO CROMÁTICO OBLIGATORIO PARA PROBLEMAS RESUELTOS */
+  --color-dato-blue: #2563EB;
+  --color-incognita-red: #DC2626;
+  --color-calculado-orange: #F97316;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+}
+
+/* ================= ESCENARIO PRINCIPAL DEL ESCRITORIO ================= */
+.notebook-viewport {
+  height: calc(100vh - var(--header-height));
+  min-height: 500px;
+  background: var(--desk-bg-deep);
+  background-image: var(--desk-bg-gradient);
+  background-attachment: fixed;
+  color: #1e293b;
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(6px, 1vh, 12px) clamp(10px, 1.8vw, 24px) clamp(6px, 1vh, 10px);
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+}
+
+#notebook-reader-content {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* ================= CUADERNO ARGOLLADO (OPEN BINDER SPREAD) ================= */
+.notebook-spread-container {
+  max-width: 1340px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.2vw, 22px);
+  box-sizing: border-box;
+}
+
+/* Botones circulares de navegación lateral flotante */
+.notebook-side-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(30, 41, 59, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+  z-index: 25;
+  user-select: none;
+}
+
+.notebook-side-nav-btn:hover:not(:disabled) {
+  background: #7c3aed;
+  border-color: #a78bfa;
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+}
+
+.notebook-side-nav-btn:disabled {
+  opacity: 0.22;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.spiral-notebook-book {
+  display: grid;
+  grid-template-columns: 1fr 44px 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  max-width: min(1240px, calc((100vh - 120px) * 1.76));
+  background: transparent;
+  position: relative;
+  border-radius: 18px;
+  box-shadow: var(--paper-shadow);
+  box-sizing: border-box;
+  perspective: 2500px;
+  -webkit-perspective: 2500px;
+  transform-style: preserve-3d;
+}
+
+/* ================= HOJAS DEL CUADERNO (PÁGINA IZQUIERDA Y DERECHA) ================= */
+.book-page {
+  background-color: var(--paper-bg-light);
+  background-image: 
+    linear-gradient(rgba(186, 215, 245, 0.22) 1px, transparent 1px);
+  background-size: 100% 26px;
+  background-position: 0 32px;
+  background-attachment: local;
+  position: relative;
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  color: #1e293b;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 237, 0.45) rgba(0, 0, 0, 0.03);
+}
+
+.book-page::after {
+  content: '';
+  display: block;
+  height: 28px;
+  min-height: 28px;
+  flex-shrink: 0;
+}
+
+/* Barra de desplazamiento discreta, visible y accesible */
+.book-page::-webkit-scrollbar {
+  width: 8px;
+}
+.book-page::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  margin: 6px 0;
+}
+.book-page::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.35);
+  border-radius: 6px;
+  border: 2px solid #ffffff;
+  transition: background 0.2s ease;
+}
+.book-page::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
+}
+.book-page::-webkit-scrollbar-thumb:active {
+  background: #6d28d9;
+}
+
+.book-page.page-portada-left {
+  padding: 0 !important;
+  background-image: none;
+  background-color: #ffffff;
+  overflow: visible;
+  border-radius: 18px 4px 4px 18px;
+  position: relative;
+}
+.book-page.page-portada-left::after {
+  display: none;
+}
+
+/* Página Izquierda */
+.book-page.page-left {
+  border-radius: 18px 4px 4px 18px;
+  box-shadow: inset -15px 0 25px -10px rgba(0, 0, 0, 0.12), -4px 0 15px rgba(0, 0, 0, 0.25);
+  border-right: none;
+}
+
+/* Página Derecha */
+.book-page.page-right {
+  border-radius: 4px 18px 18px 4px;
+  box-shadow: inset 15px 0 25px -10px rgba(0, 0, 0, 0.12), 4px 0 15px rgba(0, 0, 0, 0.25);
+  border-left: none;
+}
+
+/* Efecto de borde de páginas apiladas */
+.book-page.page-left::before {
+  content: '';
+  position: absolute;
+  top: 4px; bottom: 4px; left: -8px; width: 8px;
+  background: repeating-linear-gradient(to right, #f8fafc 0, #e2e8f0 1px, #f8fafc 2px);
+  border-radius: 16px 0 0 16px;
+  box-shadow: -2px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.book-page.page-right::after {
+  content: '';
+  position: absolute;
+  top: 4px; bottom: 4px; right: -8px; width: 8px;
+  background: repeating-linear-gradient(to left, #f8fafc 0, #e2e8f0 1px, #f8fafc 2px);
+  border-radius: 0 16px 16px 0;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ================= COLUMNA DEL ESPIRAL METÁLICO (ARGOLLAS) ================= */
+.spiral-binder-spine {
+  width: 44px;
+  background: #190e2e;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 12px 0;
+  z-index: 25;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.spiral-binder-spine::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+}
+
+/* Anillos individuales de alambre doble */
+.spiral-rings-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.spiral-ring-item {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Orificios de perforación en las hojas */
+.hole-left, .hole-right {
+  position: absolute;
+  width: 11px;
+  height: 7px;
+  background: var(--punch-hole-bg);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+  z-index: 12;
+}
+
+.hole-left {
+  left: -9px;
+}
+
+.hole-right {
+  right: -9px;
+}
+
+/* Anillo metálico 3D con curva y brillo */
+.metal-ring-loop {
+  width: 58px;
+  height: 11px;
+  position: absolute;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 25%, #64748b 60%, #334155 85%, #94a3b8 100%);
+  box-shadow: 
+    0 3px 5px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.6);
+  z-index: 15;
+  transform: rotate(-3deg);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* ================= CABECERA EDITORIAL DE PÁGINA (ESTILO CAPTURA) ================= */
+.page-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid rgba(109, 40, 217, 0.15);
+  padding-bottom: clamp(6px, 1vh, 10px);
+  margin-bottom: clamp(8px, 1.2vh, 16px);
+}
+
+.header-academic-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(0.7rem, 0.9vw, 0.76rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-purple);
+}
+
+.header-academic-label::before {
+  content: '•';
+  font-size: 1.1rem;
+  color: var(--brand-purple);
+}
+
+.page-number-pill {
+  background: rgba(109, 40, 217, 0.08);
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  color: var(--brand-purple);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: clamp(0.7rem, 0.85vw, 0.75rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Títulos y Subtítulos de Página */
+.page-main-heading {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e1b4b;
+  line-height: 1.25;
+  margin: 0 0 6px 0;
+}
+
+.page-lead-caption {
+  font-size: 0.92rem;
+  color: #64748b;
+  margin: 0 0 18px 0;
+  line-height: 1.55;
+}
+
+/* ================= PÁGINA PORTADA (IZQUIERDA) ================= */
+.portada-book-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: inherit;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.portada-image-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}
+
+.portada-image-frame img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: transform 0.25s ease;
+}
+
+.portada-book-card:hover .portada-image-frame img {
+  transform: scale(1.008);
+}
+
+/* Sombra realista de lomo en el borde derecho que se une a las argollas metálicas */
+.portada-book-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.04) 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.btn-open-interactive-book {
+  display: none;
+}
+
+/* ================= LISTA DEL ÍNDICE CON TARJETAS (ESTILO CAPTURA) ================= */
+.index-cards-vertical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.index-unit-link-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  color: #1e293b;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.index-unit-link-card:hover {
+  border-color: var(--brand-purple);
+  background: rgba(124, 58, 237, 0.04);
+  color: var(--brand-purple);
+  transform: translateX(4px);
+  box-shadow: 0 3px 10px rgba(124, 58, 237, 0.12);
+}
+
+.index-arrow-icon {
+  color: #64748b;
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.index-unit-link-card:hover .index-arrow-icon {
+  color: var(--brand-purple);
+  transform: translateX(4px);
+}
+
+.index-mindmap-footer-trigger {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(6px, 1vh, 10px) clamp(10px, 1.4vw, 14px);
+  background: rgba(124, 58, 237, 0.06);
+  border: 1.5px dashed rgba(124, 58, 237, 0.35);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.index-mindmap-footer-trigger:hover {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: var(--brand-purple);
+}
+
+.mindmap-trigger-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--brand-purple);
+  font-size: 0.9rem;
+}
+
+.mindmap-trigger-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+/* ================= CONTENIDO DE LAS UNIDADES Y SECCIONES ================= */
+.unit-section-block {
+  margin-bottom: 26px;
+}
+
+.unit-subtitle-h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin-bottom: 12px;
+}
+
+.unit-text-p {
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 14px;
+}
+
+/* Callout en Papel */
+.paper-callout {
+  background: #f8fafc;
+  border-left: 4px solid var(--brand-purple);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.paper-callout h4 {
+  margin: 0 0 6px 0;
+  color: var(--brand-purple);
+  font-size: 0.95rem;
+}
+
+.paper-callout p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+/* Ecuaciones Matemáticas en Papel */
+.paper-math-display {
+  background: #ffffff;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  font-size: 1.1rem;
+}
+
+/* Tablas en Papel */
+.paper-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  margin: 16px 0;
+}
+
+.paper-table th {
+  background: rgba(124, 58, 237, 0.08);
+  color: var(--brand-purple);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 2px solid rgba(124, 58, 237, 0.2);
+}
+
+.paper-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #334155;
+}
+
+/* ================= BOTÓN OBLIGATORIO DE MODAL EN GRÁFICAS INTERACTIVAS ================= */
+.sim-header-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 16px;
+}
+
+.sim-header-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-open-expanded-modal-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-open-expanded-modal-trigger:hover {
+  background: linear-gradient(135deg, #6d28d9, #4338ca);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.5);
+}
+
+/* ================= PROBLEMAS RESUELTOS EN 10 PASOS ================= */
+.paper-exercise-box {
+  background: #ffffff;
+  border: 1.5px solid rgba(124, 58, 237, 0.25);
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 24px 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.paper-exercise-header {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(14, 165, 233, 0.05));
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paper-exercise-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0;
+}
+
+.ten-steps-badge {
+  background: var(--brand-purple);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.paper-statement {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #1e293b;
+}
+
+.paper-steps-container {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.paper-step-item {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 12px 16px;
+  background: #ffffff;
+}
+
+.step-item-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.step-num-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand-purple);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.step-item-content {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #334155;
+}
+
+/* Colores Normativos */
+.badge-dato {
+  display: inline-block;
+  background: #2563EB;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.badge-incognita {
+  display: inline-block;
+  background: #DC2626;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.badge-calculado {
+  background: rgba(249, 115, 22, 0.15);
+  color: #F97316;
+  border: 1px solid #F97316;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ================= COMPROBACIÓN FORMATIVA Y QUIZ ================= */
+.unit-quiz-card {
+  background: #f8fafc;
+  border: 1.5px solid rgba(124, 58, 237, 0.25);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 26px 0 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.quiz-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.quiz-question-text {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: #1e293b;
+  margin-bottom: 14px;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.quiz-opt-btn:hover:not(:disabled) {
+  border-color: var(--brand-purple);
+  background: rgba(124, 58, 237, 0.05);
+  transform: translateX(3px);
+}
+
+.quiz-opt-btn.is-correct {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10b981;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.quiz-opt-btn.is-wrong {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.opt-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--brand-purple);
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.quiz-feedback-box {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.quiz-feedback-box.hidden {
+  display: none !important;
+}
+
+.feedback-status {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #6d28d9;
+  margin-bottom: 4px;
+}
+
+.feedback-explanation {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #475569;
+  margin: 0;
+}
+
+/* ================= PANEL DE NAVEGACIÓN INFERIOR (UBICADO DEBAJO DEL CUADERNO) ================= */
+.notebook-bottom-bar-detached {
+  width: 100%;
+  max-width: 1040px;
+  margin: clamp(4px, 0.8vh, 8px) auto 0;
+  background: rgba(23, 15, 43, 0.9);
+  border: 1px solid rgba(167, 139, 250, 0.22);
+  border-radius: 14px;
+  padding: clamp(6px, 0.9vh, 10px) clamp(14px, 2vw, 22px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(14px);
+  position: relative;
+  z-index: 30;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.nav-bar-row-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.nav-page-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.nav-page-dropdown {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  color: #38bdf8;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.nav-page-dropdown:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+.authors-credit-footer-tag {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.authors-credit-footer-tag strong {
+  color: #c4b5fd;
+}
+
+.btn-book-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(124, 58, 237, 0.25);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #f8fafc;
+  padding: clamp(6px, 0.8vh, 8px) clamp(12px, 1.5vw, 18px);
+  border-radius: 10px;
+  font-size: clamp(0.78rem, 0.95vw, 0.86rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.btn-book-nav:hover:not(:disabled) {
+  background: #7c3aed;
+  border-color: #a78bfa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.5);
+}
+
+.btn-book-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ================= VENTANA MODAL GRANDE COLAPSABLE PARA GRÁFICAS ================= */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 5, 20, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-backdrop.hidden {
+  display: none !important;
+}
+
+.expanded-modal-window {
+  width: 90vw;
+  max-width: 1280px;
+  height: 85vh;
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 30px rgba(124, 58, 237, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Estado Maximizado */
+.expanded-modal-window.is-maximized {
+  width: 98vw;
+  height: 96vh;
+  max-width: none;
+  border-radius: 8px;
+}
+
+/* Estado Colapsado / Minimizado */
+.expanded-modal-window.is-minimized {
+  width: 360px;
+  height: 52px;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.expanded-modal-window.is-minimized .modal-window-body,
+.expanded-modal-window.is-minimized .modal-window-footer {
+  display: none !important;
+}
+
+.modal-window-header {
+  height: 56px;
+  background: #1e293b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #38bdf8;
+}
+
+.modal-title-group h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+.badge-sync {
+  font-size: 0.72rem;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.modal-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.win-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.win-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.win-btn-close:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.modal-window-body {
+  flex-grow: 1;
+  background: #020617;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-window-body canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ================= ADAPTACIÓN RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .spiral-notebook-book {
+    max-width: min(96vw, calc((100vh - 120px) * 1.7));
+  }
+}
+
+@media (max-width: 860px) {
+  .notebook-viewport {
+    height: auto;
+    min-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    padding: 12px 10px;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .notebook-spread-container {
+    height: auto;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .notebook-side-nav-btn {
+    display: none;
+  }
+
+  .spiral-notebook-book {
+    grid-template-columns: 1fr;
+    max-width: 620px;
+    height: auto;
+    max-height: none;
+  }
+
+  .spiral-binder-spine {
+    display: none;
+  }
+
+  .book-page.page-left, .book-page.page-right {
+    border-radius: 14px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    height: auto;
+    max-height: none;
+    min-height: 440px;
+  }
+
+  .book-page.page-left {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .book-page.page-portada-left {
+    min-height: 520px;
+    height: 70vh;
+  }
+
+  .notebook-bottom-bar-detached {
+    margin: 12px auto;
+    padding: 10px 14px;
+  }
+
+  .nav-bar-row-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+/* ================= CONTROL DE SONIDO DE PAPEL ================= */
+.sound-control-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sound-toggle.is-muted {
+  opacity: 0.65;
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.btn-sound-toggle .sound-icon-off {
+  color: #ef4444;
+}
+
+.sound-slider-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 155px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(124, 58, 237, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sound-control-wrapper:hover .sound-slider-popover,
+.sound-control-wrapper:focus-within .sound-slider-popover,
+.sound-control-wrapper.is-open .sound-slider-popover {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.sound-popover-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #cbd5e1;
+}
+
+.sound-popover-val {
+  color: #a78bfa;
+  font-family: var(--font-mono-sys, monospace);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sound-volume-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #334155;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sound-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.sound-volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #a78bfa;
+}
+
+.sound-volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+/* ================= SISTEMA 3D PAGE FLIP (PASAR PÁGINAS) ================= */
+
+/* Contenedor en estado activo de giro */
+.spiral-notebook-book.is-page-flipping {
+  user-select: none;
+}
+
+/* Hoja física que gira en 3D */
+.page-flip-leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: calc((100% - 44px) / 2);
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  z-index: 20;
+  pointer-events: none;
+  box-sizing: border-box;
+  will-change: transform, box-shadow;
+}
+
+/* Giro hacia adelante (Next): de página derecha hacia página izquierda */
+.page-flip-leaf.leaf-next {
+  right: 0;
+  transform-origin: -22px center;
+  transform: rotateY(0deg);
+}
+
+.page-flip-leaf.leaf-next.is-flipping {
+  animation: flipLeafForward 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+/* Giro hacia atrás (Prev): de página izquierda hacia página derecha */
+.page-flip-leaf.leaf-prev {
+  left: 0;
+  transform-origin: calc(100% + 22px) center;
+  transform: rotateY(0deg);
+}
+
+.page-flip-leaf.leaf-prev.is-flipping {
+  animation: flipLeafBackward 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+/* Animaciones con curvatura física realista (flexión de papel y torsión sutil) */
+@keyframes flipLeafForward {
+  0% {
+    transform: rotateY(0deg) skewY(0deg) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  30% {
+    transform: rotateY(-55deg) skewY(-2.4deg) scale(1.02);
+    box-shadow: -22px 24px 38px rgba(0, 0, 0, 0.38);
+  }
+  70% {
+    transform: rotateY(-125deg) skewY(2.4deg) scale(1.02);
+    box-shadow: -16px 24px 38px rgba(0, 0, 0, 0.38);
+  }
+  100% {
+    transform: rotateY(-180deg) skewY(0deg) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes flipLeafBackward {
+  0% {
+    transform: rotateY(0deg) skewY(0deg) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  30% {
+    transform: rotateY(55deg) skewY(2.4deg) scale(1.02);
+    box-shadow: 22px 24px 38px rgba(0, 0, 0, 0.38);
+  }
+  70% {
+    transform: rotateY(125deg) skewY(-2.4deg) scale(1.02);
+    box-shadow: 16px 24px 38px rgba(0, 0, 0, 0.38);
+  }
+  100% {
+    transform: rotateY(180deg) skewY(0deg) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Caras frontal y trasera de la hoja giratoria */
+.page-flip-leaf .flip-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden !important;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.page-flip-leaf .flip-face-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  padding: 24px 28px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-flip-leaf .flip-face.page-portada-left .flip-face-inner {
+  padding: 0 !important;
+}
+
+/* Orientación de las caras en espacio 3D */
+.page-flip-leaf .flip-face-front {
+  transform: rotateY(0deg);
+}
+
+.page-flip-leaf.leaf-next .flip-face-back {
+  transform: rotateY(180deg);
+}
+
+.page-flip-leaf.leaf-prev .flip-face-back {
+  transform: rotateY(-180deg);
+}
+
+/* Sombras dinámicas y reflejos de luz sobre la curvatura de la hoja */
+.flip-lighting-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.page-flip-leaf.leaf-next .overlay-front {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.08) 40%, rgba(255, 255, 255, 0.22) 100%);
+  animation: shadowFadeFront 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+.page-flip-leaf.leaf-next .overlay-back {
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.08) 40%, rgba(255, 255, 255, 0.22) 100%);
+  animation: shadowFadeBack 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+.page-flip-leaf.leaf-prev .overlay-front {
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.08) 40%, rgba(255, 255, 255, 0.22) 100%);
+  animation: shadowFadeFront 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+.page-flip-leaf.leaf-prev .overlay-back {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.08) 40%, rgba(255, 255, 255, 0.22) 100%);
+  animation: shadowFadeBack 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+@keyframes shadowFadeFront {
+  0% { opacity: 0; }
+  35% { opacity: 0.5; }
+  100% { opacity: 0.9; }
+}
+
+@keyframes shadowFadeBack {
+  0% { opacity: 0.9; }
+  65% { opacity: 0.45; }
+  100% { opacity: 0; }
+}
+
+/* Sombra arrojada sobre la página base de aterrizaje */
+.flip-drop-shadow-base {
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  width: 60px;
+  z-index: 12;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(14px);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.page-flip-leaf.leaf-next ~ .flip-drop-shadow-base {
+  animation: dropShadowAnimForward 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+.page-flip-leaf.leaf-prev ~ .flip-drop-shadow-base {
+  animation: dropShadowAnimBackward 620ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+@keyframes dropShadowAnimForward {
+  0% {
+    right: calc(50% + 25px);
+    width: 20px;
+    opacity: 0;
+  }
+  45% {
+    right: calc(65%);
+    width: 90px;
+    opacity: 0.6;
+  }
+  100% {
+    right: calc(90%);
+    width: 40px;
+    opacity: 0;
+  }
+}
+
+@keyframes dropShadowAnimBackward {
+  0% {
+    left: calc(50% + 25px);
+    width: 20px;
+    opacity: 0;
+  }
+  45% {
+    left: calc(65%);
+    width: 90px;
+    opacity: 0.6;
+  }
+  100% {
+    left: calc(90%);
+    width: 40px;
+    opacity: 0;
+  }
+}
+
+/* Prevención de clics múltiples mientras se ejecuta el volteo */
+.is-page-flipping button,
+.is-page-flipping .index-unit-link-card,
+.is-page-flipping .portada-book-card {
+  pointer-events: none !important;
+}
+
+/* ================= PANTALLA INICIAL: CUADERNO CERRADO ================= */
+.closed-notebook-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height, 60px));
+  padding: 24px 20px 32px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 40;
+  background: radial-gradient(circle at 50% 38%, rgba(30, 19, 56, 0.75) 0%, rgba(15, 23, 42, 0.95) 75%), #0b0f19;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.closed-notebook-screen.is-hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.closed-notebook-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  perspective: 2600px;
+  -webkit-perspective: 2600px;
+  max-width: 100%;
+}
+
+/* Objeto 3D del Cuaderno Cerrado */
+.closed-notebook-3d-card {
+  position: relative;
+  width: min(440px, 86vw);
+  height: calc(min(440px, 86vw) * 1.44);
+  max-height: min(72vh, 640px);
+  max-width: min(440px, calc((72vh) / 1.44));
+  border-radius: 6px 14px 14px 6px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+  user-select: none;
+  outline: none;
+}
+
+.closed-notebook-3d-card:hover {
+  transform: translateY(-4px) rotateX(1.5deg) scale(1.01);
+}
+
+.closed-notebook-3d-card:focus-visible {
+  box-shadow: 0 0 0 3px #8b5cf6, 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Simulación física del lomo de anillas / espiral izquierdo */
+.closed-spiral-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 36px;
+  background: linear-gradient(90deg, #0e071c 0%, #1e1338 65%, #130a24 100%);
+  border-radius: 6px 0 0 6px;
+  z-index: 15;
+  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.65), -2px 0 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.closed-rings-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.closed-ring-item {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closed-ring-hole {
+  position: absolute;
+  right: 5px;
+  width: 7px;
+  height: 9px;
+  background: #090514;
+  border-radius: 40%;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.closed-ring-wire {
+  width: 32px;
+  height: 7px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 35%, #64748b 70%, #334155 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+  margin-left: -4px;
+}
+
+/* Grosor de las hojas apiladas (efecto de papel físico de 100 páginas) */
+.closed-page-block-right {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  right: -10px;
+  width: 11px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #ffffff 0px,
+    #f1f5f9 1px,
+    #cbd5e1 2px,
+    #f8fafc 3px
+  );
+  border-radius: 0 4px 4px 0;
+  box-shadow: 
+    2px 0 6px rgba(0, 0, 0, 0.35),
+    inset -1px 0 2px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.closed-page-block-bottom {
+  position: absolute;
+  bottom: -8px;
+  left: 36px;
+  right: -10px;
+  height: 9px;
+  background: repeating-linear-gradient(
+    to right,
+    #ffffff 0px,
+    #f1f5f9 1px,
+    #cbd5e1 2px,
+    #f8fafc 3px
+  );
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.closed-page-block-top {
+  position: absolute;
+  top: -5px;
+  left: 36px;
+  right: -10px;
+  height: 6px;
+  background: repeating-linear-gradient(
+    to right,
+    #ffffff 0px,
+    #f1f5f9 1px,
+    #cbd5e1 2px,
+    #f8fafc 3px
+  );
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+/* Cubierta frontal de la portada que gira en 3D */
+.closed-cover-leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 36px;
+  right: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  z-index: 10;
+  border-radius: 0 14px 14px 0;
+  box-shadow: 
+    0 15px 35px -5px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(124, 58, 237, 0.2);
+  will-change: transform;
+}
+
+/* Cara Frontal Exterior (Portada) */
+.closed-cover-front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: #ffffff;
+  border-radius: 0 14px 14px 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closed-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #ffffff;
+  display: block;
+}
+
+.closed-cover-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+/* Cara Posterior Interior (reverso de la portada al abrirse) */
+.closed-cover-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: #fbfcfe;
+  background-image: linear-gradient(rgba(186, 215, 245, 0.22) 1px, transparent 1px);
+  background-size: 100% 26px;
+  background-position: 0 32px;
+  border-radius: 14px 0 0 14px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.closed-cover-back-paper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closed-back-logo-watermark {
+  text-align: center;
+  opacity: 0.18;
+  color: #1e1b4b;
+  user-select: none;
+}
+
+.closed-back-logo-watermark .watermark-utp {
+  display: block;
+  font-family: var(--font-heading-sys, sans-serif);
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.closed-back-logo-watermark .watermark-sub {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.closed-cover-back-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.25) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Sombra de apoyo en la mesa / fondo */
+.closed-notebook-desk-shadow {
+  position: absolute;
+  bottom: -20px;
+  left: 8%;
+  right: -5%;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 75%);
+  filter: blur(12px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Controles de Apertura */
+.closed-notebook-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.btn-open-interactive-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 34px;
+  font-family: var(--font-heading-sys, 'Outfit', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #3b82f6 100%);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 
+    0 10px 25px -5px rgba(124, 58, 237, 0.55),
+    0 0 20px rgba(99, 102, 241, 0.35);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  outline: none;
+}
+
+.btn-open-interactive-book:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 
+    0 14px 30px -4px rgba(124, 58, 237, 0.65),
+    0 0 28px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #60a5fa 100%);
+}
+
+.btn-open-interactive-book:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.btn-open-icon {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.btn-open-interactive-book:hover .btn-open-icon {
+  transform: scale(1.15);
+}
+
+.btn-open-arrow {
+  transition: transform 0.2s ease;
+}
+
+.btn-open-interactive-book:hover .btn-open-arrow {
+  transform: translateX(4px);
+}
+
+.closed-notebook-helper-text {
+  margin: 0;
+  font-size: 12.5px;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+/* ================= ANIMACIONES 3D DE APERTURA Y CIERRE ================= */
+.closed-notebook-screen.is-animating-open .closed-cover-leaf {
+  animation: openCover3DAnim 1250ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+.closed-notebook-screen.is-animating-open .closed-notebook-controls {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.closed-notebook-screen.is-animating-open .closed-notebook-3d-card {
+  animation: openCardShift 1250ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+@keyframes openCover3DAnim {
+  0% {
+    transform: rotateY(0deg) skewY(0deg) scale(1);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5);
+  }
+  30% {
+    transform: rotateY(-60deg) skewY(-3deg) scale(1.02);
+    box-shadow: -25px 25px 45px rgba(0, 0, 0, 0.45);
+  }
+  70% {
+    transform: rotateY(-130deg) skewY(3deg) scale(1.02);
+    box-shadow: -15px 25px 40px rgba(0, 0, 0, 0.4);
+  }
+  100% {
+    transform: rotateY(-180deg) skewY(0deg) scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  }
+}
+
+@keyframes openCardShift {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(60px) scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(90px) scale(1.04);
+  }
+}
+
+/* Animación de Cierre (de regreso a portada cerrada) */
+.closed-notebook-screen.is-animating-close .closed-cover-leaf {
+  animation: closeCover3DAnim 1100ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+.closed-notebook-screen.is-animating-close .closed-notebook-3d-card {
+  animation: closeCardShift 1100ms cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+@keyframes closeCover3DAnim {
+  0% {
+    transform: rotateY(-180deg) skewY(0deg) scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  }
+  35% {
+    transform: rotateY(-120deg) skewY(3deg) scale(1.02);
+    box-shadow: -15px 25px 40px rgba(0, 0, 0, 0.4);
+  }
+  70% {
+    transform: rotateY(-50deg) skewY(-3deg) scale(1.02);
+    box-shadow: -25px 25px 45px rgba(0, 0, 0, 0.45);
+  }
+  100% {
+    transform: rotateY(0deg) skewY(0deg) scale(1);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@keyframes closeCardShift {
+  0% {
+    opacity: 0;
+    transform: translateX(80px) scale(1.03);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Estado del contenedor del cuaderno abierto */
+#view-notebook-container.is-hidden {
+  display: none !important;
+}
+
+#view-notebook-container.is-revealed {
+  animation: fadeInNotebook 0.45s ease forwards;
+}
+
+@keyframes fadeInNotebook {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Botón de Cerrar Cuaderno en Cabecera */
+.btn-action-close-book {
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.btn-action-close-book:hover {
+  background: rgba(124, 58, 237, 0.25);
+  border-color: #8b5cf6;
+  color: #ffffff;
+}
+
+/* ============================================================
+   CAPA DE PÁGINA INTERIOR DEBAJO DE LA PORTADA (previsualización del índice)
+   Visible durante la animación de apertura cuando la portada
+   gira y deja ver el interior del cuaderno
+   ============================================================ */
+.closed-under-page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 36px;      /* comienza donde termina el lomo */
+  right: 0;
+  background-color: #ffffff;
+  background-image: linear-gradient(rgba(186, 215, 245, 0.22) 1px, transparent 1px);
+  background-size: 100% 26px;
+  background-position: 0 32px;
+  border-radius: 0 14px 14px 0;
+  z-index: 5;      /* detrás de la portada (z=10) pero delante del fondo */
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 18px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;   /* no capta clics */
+}
+
+/* Escala los textos al tamaño compacto del cuaderno cerrado */
+.closed-under-page .page-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 6px;
+}
+
+.closed-under-page .header-academic-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #7c3aed;
+}
+
+.closed-under-page .page-number-pill {
+  font-size: 0.6rem;
+  padding: 2px 7px;
+  background: rgba(124, 58, 237, 0.12);
+  border-radius: 20px;
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.closed-under-page .page-main-heading {
+  font-size: 0.9rem !important;
+  margin: 0 0 4px !important;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.closed-under-page .page-lead-caption {
+  font-size: 0.65rem !important;
+  color: #64748b;
+  margin-bottom: 8px !important;
+  line-height: 1.4;
+}
+
+/* Lista de índice compacta para la vista previa */
+.closed-preview-list .index-unit-link-card {
+  padding: 5px 10px;
+  margin-bottom: 3px;
+  font-size: 0.65rem;
+  border-radius: 7px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.closed-preview-list .index-arrow-icon {
+  font-size: 0.65rem;
+  opacity: 0.5;
+}
+
+/* Cara posterior de la cubierta reutiliza la portada en espejo */
+.closed-cover-back-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closed-cover-back-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.08;    /* muy sutil: sólo se vislumbra en el reverso */
+  filter: grayscale(1);
+}
+
+/* ============================================================
+   RESPONSIVE: Pantalla Cerrada en Móvil / Tablet pequeña
+   ============================================================ */
+@media (max-width: 860px) {
+  .closed-notebook-3d-card {
+    width: min(340px, 90vw);
+    height: calc(min(340px, 90vw) * 1.44);
+  }
+
+  .closed-notebook-screen {
+    padding: 16px 12px 24px;
+  }
+
+  .btn-open-interactive-book {
+    font-size: 13px;
+    padding: 11px 24px;
+  }
+
+  .closed-under-page {
+    padding: 12px 14px 10px;
+  }
+}
+
+

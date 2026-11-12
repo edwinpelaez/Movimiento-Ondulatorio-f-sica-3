@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuaderno Virtual de Física 3: Movimiento Ondulatorio</title>
+  <meta name="description" content="Cuaderno virtual universitario interactivo de Física 3 dedicado al movimiento ondulatorio, superposición, ondas mecánicas, acústica y óptica física. Con plano cartesiano estilo GeoGebra y ejercicios en 10 pasos.">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- Fuentes Google con fallback offline -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" onerror="this.remove()">
+
+  <!-- KaTeX para renderizado de fórmulas LaTeX (local bundled) -->
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <script src="vendor/katex/katex.min.js"></script>
+
+  <!-- Hojas de Estilos: General + Editorial Cuaderno + Simulaciones Integradas -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/notebook.css">
+  <link rel="stylesheet" href="css/notebook-simulations.css">
+
+  <!-- Variables de fuente de respaldo (sin internet) -->
+  <style>
+    :root {
+      --font-system: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --font-heading-sys: 'Outfit', 'Segoe UI', 'Trebuchet MS', sans-serif;
+      --font-mono-sys: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+    /* Aplicar fuentes de respaldo si Google Fonts no carga */
+    body { font-family: var(--font-system); }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- ================= BARRA DE NAVEGACIÓN SUPERIOR ================= -->
+  <header class="app-header" role="banner">
+    <div class="header-brand" onclick="if(window.notebookApp) window.notebookApp.navigateTo('portada');" style="cursor: pointer;">
+      <div class="brand-icon-wrapper" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12c2.5-4 5.5-4 8 0s5.5 4 8 0 4-4 4-4"/>
+          <path d="M2 16c2.5-4 5.5-4 8 0s5.5 4 8 0 4-4 4-4" opacity="0.6"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">Física 3: Movimiento Ondulatorio</h1>
+        <p class="brand-subtitle">Cuaderno Virtual Universitario &middot; 1.ª Edición Digital</p>
+      </div>
+    </div>
+
+    <!-- Pestaña de Modo Principal: solo Cuaderno Universitario -->
+    <nav class="header-mode-nav" aria-label="Modo de Vista">
+      <button type="button" class="btn-mode-tab active" id="tab-mode-notebook" title="Ver Cuaderno Virtual y Teoría">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Cuaderno Universitario</span>
+      </button>
+    </nav>
+
+    <!-- Accesos Rápidos del Cuaderno -->
+    <div class="header-actions">
+      <span class="header-page-pill" id="header-page-indicator">Pág. 1 / 11</span>
+      <button type="button" class="btn-action" onclick="if(window.notebookApp) window.notebookApp.goToSpread(0);" title="Índice General">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span class="btn-text">Índice</span>
+      </button>
+      <button type="button" class="btn-action" onclick="if(window.notebookApp) window.notebookApp.goToSpread(8);" title="Simulaciones de Física 3 (Págs. 17 a 20)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span class="btn-text">Simulaciones (Pág. 17-20)</span>
+      </button>
+      <button type="button" class="btn-action" onclick="if(window.notebookApp) window.notebookApp.goToSpread(10);" title="Formulario de Fórmulas">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+        <span class="btn-text">Formulario</span>
+      </button>
+      <button type="button" class="btn-action" onclick="if(window.notebookApp) window.notebookApp.goToSpread(9);" title="Glosario">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span class="btn-text">Glosario</span>
+      </button>
+
+      <!-- Control Interactivo de Sonido de Papel (Mute y Volumen Ajustable) -->
+      <div class="sound-control-wrapper" id="sound-control-wrapper">
+        <button type="button" class="btn-action btn-sound-toggle" id="btn-sound-toggle" title="Efecto de sonido de papel: Activado (70%)" aria-label="Efecto de sonido de papel">
+          <svg class="sound-icon-on" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+          <svg class="sound-icon-off" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+          <span class="btn-text">Sonido</span>
+        </button>
+        <div class="sound-slider-popover" id="sound-slider-popover" role="region" aria-label="Control de volumen de sonido de papel">
+          <div class="sound-popover-title-row">
+            <span class="sound-popover-label">Efecto Hoja</span>
+            <span class="sound-popover-val" id="sound-volume-percent">70%</span>
+          </div>
+          <input type="range" id="sound-volume-slider" class="sound-volume-slider" min="0" max="100" value="70" step="5" aria-label="Volumen del efecto de papel">
+        </div>
+      </div>
+
+      <!-- Botón Discreto para Cerrar Cuaderno -->
+      <button type="button" class="btn-action btn-action-close-book" id="btn-close-notebook" title="Cerrar Cuaderno (Volver a la Portada inicial)" style="display: none;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <span class="btn-text">Cerrar Cuaderno</span>
+      </button>
+
+      <button type="button" class="btn-action" id="btn-header-fullscreen" title="Pantalla Completa">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= PANTALLA INICIAL: CUADERNO CERRADO ================= -->
+  <section id="closed-notebook-screen" class="closed-notebook-screen" aria-label="Cuaderno Cerrado de Física 3">
+    <div class="closed-notebook-stage">
+      <!-- Objeto 3D del Cuaderno Cerrado -->
+      <div class="closed-notebook-3d-card" id="closed-notebook-card" role="button" tabindex="0" title="Haga clic para abrir el cuaderno interactivo" aria-label="Portada del cuaderno cerrado. Haga clic para abrir.">
+        
+        <!-- Bloque de hojas apiladas simulando grosor físico del cuaderno -->
+        <div class="closed-page-block-right" aria-hidden="true"></div>
+        <div class="closed-page-block-bottom" aria-hidden="true"></div>
+        <div class="closed-page-block-top" aria-hidden="true"></div>
+
+        <!-- Columna lateral izquierda del espiral con anillas metálicas -->
+        <div class="closed-spiral-spine" aria-hidden="true">
+          <div class="closed-rings-list">
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+            <div class="closed-ring-item"><div class="closed-ring-hole"></div><div class="closed-ring-wire"></div></div>
+          </div>
+        </div>
+
+        <!-- Primera página interior situada debajo de la portada (Pág. 02: Índice General y Mapa Mental) -->
+        <div class="closed-under-page" aria-hidden="true">
+          <div class="page-top-header">
+            <div class="header-academic-label">Contenido Académico</div>
+            <div class="page-number-pill">Pág. 02</div>
+          </div>
+          <h2 class="page-main-heading" style="font-size: 1.25rem;">Índice General y Mapa Mental</h2>
+          <p class="page-lead-caption" style="font-size: 0.8rem; margin-bottom: 12px;">Estructura curricular y conexiones conceptuales del estudio del Movimiento Ondulatorio.</p>
+          <div class="index-cards-vertical-list closed-preview-list">
+            <div class="index-unit-link-card"><span><strong>3.</strong> Reseña Histórica y Línea de Tiempo</span><span class="index-arrow-icon">→</span></div>
+            <div class="index-unit-link-card"><span><strong>4.</strong> Fundamentos del Movimiento Ondulatorio</span><span class="index-arrow-icon">→</span></div>
+            <div class="index-unit-link-card"><span><strong>5.</strong> Clasificación de Ondas (Mecánicas, Transv.)</span><span class="index-arrow-icon">→</span></div>
+            <div class="index-unit-link-card"><span><strong>6.</strong> Descripción Matemática y Demostración EDO</span><span class="index-arrow-icon">→</span></div>
+            <div class="index-unit-link-card"><span><strong>7.</strong> Velocidad de Propagación y Energía</span><span class="index-arrow-icon">→</span></div>
+            <div class="index-unit-link-card"><span><strong>8.</strong> Superposición, Interferencia y Batidos</span><span class="index-arrow-icon">→</span></div>
+          </div>
+        </div>
+
+        <!-- Hoja de la Cubierta / Portada que gira en 3D -->
+        <div class="closed-cover-leaf" id="closed-cover-leaf">
+          <!-- Cara Frontal Exterior (Portada Oficial Física 3) -->
+          <div class="closed-cover-front">
+            <img src="Imagenes/Portada.png" alt="Portada Oficial Cuaderno de Física 3: Movimiento Ondulatorio" class="closed-cover-img" id="closed-cover-img">
+            <div class="closed-cover-sheen" aria-hidden="true"></div>
+          </div>
+          <!-- Cara Posterior Interior (portada visible en la página izquierda al abrirse en 3D) -->
+          <div class="closed-cover-back" aria-hidden="true">
+            <div class="closed-cover-back-inner">
+              <img src="Imagenes/Portada.png" alt="Portada Interior Física 3" class="closed-cover-img">
+            </div>
+            <div class="closed-cover-back-shadow"></div>
+          </div>
+        </div>
+
+        <!-- Sombra ambiental en el escritorio -->
+        <div class="closed-notebook-desk-shadow" aria-hidden="true"></div>
+      </div>
+
+      <!-- Controles de Apertura Debajo del Cuaderno -->
+      <div class="closed-notebook-controls">
+        <button type="button" class="btn-open-interactive-book" id="btn-open-notebook" aria-label="Abrir Cuaderno">
+          <svg class="btn-open-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span class="btn-open-label">ABRIR CUADERNO</span>
+          <svg class="btn-open-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+        <p class="closed-notebook-helper-text">Haz clic en el botón o directamente sobre la portada para abrir</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA 1: CUADERNO VIRTUAL UNIVERSITARIO ================= -->
+  <main id="view-notebook-container" class="notebook-viewport" role="main">
+    <!-- Contenido dinámico del Cuaderno (Portada, Unidades 1-12, Mapa Mental, Timeline, etc.) -->
+    <div id="notebook-reader-content">
+      <!-- Inyectado por NotebookApp -->
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN INFERIOR DESPRENDIDA (SITUADA DEBAJO DEL CUADERNO, NUNCA SUPERPUESTA) -->
+    <footer class="notebook-bottom-bar-detached" role="navigation" aria-label="Navegación de Páginas y Créditos">
+      <div class="nav-bar-row-controls">
+        <button type="button" class="btn-book-nav" id="btn-nav-home" title="Ir a la Portada">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Inicio</span>
+        </button>
+
+        <button type="button" class="btn-book-nav" id="btn-nav-prev" title="Página Anterior (Tecla Flecha Izquierda)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Anterior</span>
+        </button>
+
+        <div class="nav-page-select-wrapper">
+          <span>Página</span>
+          <select id="spread-select" class="nav-page-dropdown" aria-label="Seleccionar Pliego del Cuaderno">
+            <option value="0">1 &middot; Portada e Índice</option>
+            <option value="1">2 &middot; Historia y Mapa Mental</option>
+            <option value="2">3 &middot; Unidades 1 y 2</option>
+            <option value="3">4 &middot; Unidades 3 y 4</option>
+            <option value="4">5 &middot; Unidades 5 y 6</option>
+            <option value="5">6 &middot; Unidades 7 y 8</option>
+            <option value="6">7 &middot; Unidades 9 y 10</option>
+            <option value="7">8 &middot; Unidades 11 y 12</option>
+            <option value="8">9 &middot; Ondas (Pág. 17) y Doppler (Pág. 18)</option>
+            <option value="9">10 &middot; Tubos Sonoros (Pág. 19) y Cuerdas Tensas (Pág. 20)</option>
+            <option value="10">11 &middot; Formulario, Glosario y APA 7 (Págs. 21-22)</option>
+          </select>
+          <span>de 11</span>
+        </div>
+
+        <button type="button" class="btn-book-nav" id="btn-nav-next" title="Página Siguiente (Tecla Flecha Derecha)">
+          <span>Siguiente</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="authors-credit-footer-tag">
+        <span>Cuaderno creado por : <strong>Alejandra Barreto, Camila Rengifo y Santiago Peláez</strong></span>
+      </div>
+    </footer>
+  </main>
+
+
+  <!-- ================= VENTANA MODAL AMPLIADA GEOGEBRA Y SIMULACIONES ================= -->
+  <div class="modal-backdrop hidden" id="expanded-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="expanded-modal-window" id="expanded-modal-window">
+      <div class="modal-window-header">
+        <div class="modal-title-group">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12c2.5-4 5.5-4 8 0s5.5 4 8 0 4-4 4-4"/></svg>
+          <h3 id="modal-title" class="modal-title">Gráfico Cartesiano &middot; Vista Ampliada</h3>
+        </div>
+        <div class="modal-window-controls">
+          <button type="button" class="win-btn win-btn-minimize" id="btn-minimize-modal" title="Minimizar / Colapsar ventana">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button type="button" class="win-btn win-btn-maximize" id="btn-maximize-modal" title="Maximizar / Restaurar tamaño">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+          </button>
+          <button type="button" class="win-btn win-btn-fullscreen" id="btn-fullscreen-modal" title="Pantalla completa">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
+          <button type="button" class="win-btn win-btn-close" id="btn-close-modal" title="Cerrar modal (Escape)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="modal-window-body">
+        <canvas id="modal-canvas" aria-label="Gráfico cartesiano ampliado"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PALETA DE ESTILOS MODAL ================= -->
+  <div class="modal-backdrop hidden" id="style-modal" role="dialog" aria-modal="true" aria-labelledby="style-modal-title">
+    <div class="style-dialog-window">
+      <div class="modal-window-header">
+        <div class="modal-title-group">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20"/></svg>
+          <h3 id="style-modal-title" class="modal-title">Paleta de Estilos Gráficos</h3>
+        </div>
+        <button type="button" class="win-btn win-btn-close" id="btn-close-styles" title="Cerrar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="style-dialog-body">
+        <fieldset class="style-section">
+          <legend class="style-section-title">Tema del Gráfico</legend>
+          <div class="style-form-row">
+            <label for="style-bg-preset">Preajuste de Fondo:</label>
+            <select id="style-bg-preset" class="select-clean">
+              <option value="dark">Modo Oscuro Profundo</option>
+              <option value="light">Modo Claro GeoGebra</option>
+              <option value="millimeter">Papel Milimetrado Técnico</option>
+            </select>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODALES DOPPLER (ESCENARIOS Y TEORÍA) ================= -->
+  <!-- MODAL: CATÁLOGO DE LOS 8 ESCENARIOS DIDÁCTICOS DOPPLER -->
+  <div id="modalScenarios" class="doppler-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalScenariosTitle">
+    <div class="doppler-modal-dialog">
+      <div class="doppler-modal-header">
+        <h3 id="modalScenariosTitle" class="doppler-modal-title">Catálogo de 8 Escenarios Guiados Doppler</h3>
+        <button id="btnCloseScenarios" class="win-btn win-btn-close" aria-label="Cerrar ventana">✕</button>
+      </div>
+      <div class="doppler-modal-body">
+        <p>Selecciona un experimento preconfigurado para estudiar las propiedades esenciales del efecto Doppler acústico:</p>
+        <div id="scenariosList" class="doppler-presets-grid" style="grid-template-columns: 1fr; gap: 8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FUNDAMENTO TEÓRICO DOPPLER -->
+  <div id="modalHelp" class="doppler-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalHelpTitle">
+    <div class="doppler-modal-dialog">
+      <div class="doppler-modal-header">
+        <h3 id="modalHelpTitle" class="doppler-modal-title">Fundamentación Física &middot; Efecto Doppler Acústico</h3>
+        <button id="btnCloseHelp" class="win-btn win-btn-close" aria-label="Cerrar ventana">✕</button>
+      </div>
+      <div class="doppler-modal-body">
+        <h4>1. El Medio Acústico en Reposo</h4>
+        <p>A diferencia de la luz en el vacío, las ondas mecánicas de sonido requieren un medio elástico y deformable (en este simulador, aire homogéneo e inmóvil). La rapidez de propagación <em>c = 340 m/s</em> es una propiedad intrínseca del medio, no de la velocidad del emisor.</p>
+        <h4>2. Emisión y Centros de Frente Invariables</h4>
+        <p>Cada frente de onda circular es emitido en un instante exacto \(t_{e,n} = n/f\). Una vez desprendido de la fuente, el centro del círculo permanece rígidamente fijado en las coordenadas del medio donde ocurrió la emisión. El frente no acompaña el movimiento posterior de la fuente.</p>
+        <h4>3. Detección Analítica de Cruce</h4>
+        <p>El observador detecta una perturbación cuando la distancia euclidiana entre su posición en el instante de recepción \(t_r\) y el centro del frente coincide con el radio acústico expandido: \(|\mathbf{x}_o(t_r) - \mathbf{x}_c| = c(t_r - t_e)\).</p>
+        <h4>4. Régimen Sónico y Supersónico</h4>
+        <p>Cuando la fuente supera la velocidad del sonido (\(M = v_f/c > 1\)), los frentes circulares quedan envueltos dentro de una superficie cónica con semiángulo \(\mu = \arcsin(1/M)\) produciendo la onda de choque acústica (estampido sónico).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts de la Aplicación (Bundle Standalone para ejecución local sin servidor) -->
+  <script defer src="js/bundle.js"></script>
+
+  <script>
+    // PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((err) => {
+          console.warn('Registro de Service Worker:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

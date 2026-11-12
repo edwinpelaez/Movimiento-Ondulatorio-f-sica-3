@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Simulador Avanzado del Efecto Doppler Acústico</title>
+  <meta name="description" content="Laboratorio virtual avanzado y simulador del Efecto Doppler acústico en un medio homogéneo y en reposo. Ondas circulares, cono de Mach, telemetría y verificación científica.">
+  
+  <!-- Estilos del Simulador Doppler -->
+  <link rel="stylesheet" href="css/doppler.css">
+  
+  <!-- KaTeX Local para renderizado matemático offline de alta velocidad -->
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <script defer src="vendor/katex/katex.min.js"></script>
+</head>
+<body class="mode-exploration">
+  <div class="app-container">
+    
+    <!-- ENCABEZADO SUPERIOR -->
+    <header class="header-bar" role="banner">
+      <div class="brand-wrapper">
+        <div class="brand-logo" aria-hidden="true">λ</div>
+        <div class="brand-title">
+          <span>Efecto Doppler</span>
+          <span class="badge-tag">Acústica 2D</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <!-- Selector de Nivel: Exploración vs Laboratorio -->
+        <div class="mode-toggle-group" role="group" aria-label="Nivel de interacción">
+          <button id="btnModeExploration" class="mode-btn active" title="Modo interactivo esencial para observación directa">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 12 12 16 12 8"></polygon></svg>
+            Exploración
+          </button>
+          <button id="btnModeLab" class="mode-btn" title="Modo avanzado con vectores, telemetría, gráficas y fórmulas">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"></path><path d="M14 9.3V2"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"></path></svg>
+            Laboratorio
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- 8 Escenarios Guiados -->
+        <button id="btnOpenScenarios" class="btn-pill" title="Explorar 8 Escenarios Didácticos Guiados">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Escenarios
+        </button>
+
+        <!-- Toggle de Audio -->
+        <button id="btnAudioToggle" class="btn-icon" aria-label="Activar audio didáctico" aria-pressed="false" title="Activar/Desactivar sonificación">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
+
+        <!-- Ayuda Teórica y Límites -->
+        <button id="btnOpenHelp" class="btn-icon" aria-label="Ayuda teórica y ecuaciones" title="Fundamentación Teórica y Modelo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </button>
+
+        <!-- Alternar Tema Claro/Oscuro -->
+        <button id="btnThemeToggle" class="btn-icon" aria-label="Alternar tema de color" title="Modo Claro / Oscuro">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <!-- Enlace al Cuaderno Principal -->
+        <a href="index.html" class="btn-pill" title="Volver al Cuaderno de Física 3">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Cuaderno
+        </a>
+      </div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL: SIMULACIÓN + SIDEBAR -->
+    <main class="main-workspace" role="main">
+      
+      <!-- LIENZO Y VISTA DE SIMULACIÓN -->
+      <section class="simulation-viewport" aria-label="Área de simulación gráfica de frentes de onda">
+        <canvas id="dopplerCanvas"></canvas>
+
+        <!-- HUD FLOTANTE SUPERIOR IZQUIERDA -->
+        <div class="canvas-hud">
+          <div id="hudRegimeBadge" class="hud-chip">
+            <span class="hud-indicator"></span>
+            <span>Subsónico</span>
+          </div>
+          <div class="hud-chip">
+            <span>Separación: <strong id="telemetryDist">340.0 m</strong></span>
+          </div>
+          <div class="hud-chip">
+            <span>f_o teórica: <strong id="telemetryFoTheory" style="color: var(--accent-observer);">2.00 Hz</strong></span>
+          </div>
+          <div class="hud-chip">
+            <span>f_medida: <strong id="telemetryFoMeasured" style="color: var(--accent-success);">Esperando 2 llegadas...</strong></span>
+          </div>
+        </div>
+
+        <!-- BARRA DE HERRAMIENTAS FLOTANTE DEL LIENZO -->
+        <div class="canvas-toolbar" role="toolbar" aria-label="Herramientas de cámara y medición">
+          <button id="btnFitScene" class="btn-icon" title="Ajustar escena a la pantalla" aria-label="Ajustar escena">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+          </button>
+          <button id="btnResetView" class="btn-icon" title="Restaurar vista por defecto" aria-label="Restaurar vista">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+          </button>
+          <button id="btnToggleRuler" class="btn-icon" title="Cinta métrica / Regla de medición" aria-label="Activar regla métrica">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z"></path><path d="m7.5 10.5 2 2"></path><path d="m10.5 7.5 2 2"></path><path d="m13.5 4.5 2 2"></path></svg>
+          </button>
+          <button id="btnFollowSource" class="btn-icon" title="Seguir a la fuente con la cámara" aria-label="Seguir fuente">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3"></path></svg>
+          </button>
+        </div>
+
+        <!-- Banner de Notificación de Eventos (Llegada / Choque) -->
+        <div id="toastBanner" class="toast-event-banner" role="status" aria-live="polite">
+          <span style="color: var(--accent-success);">●</span>
+          <span id="toastMessage">Frente de onda recibido por el observador</span>
+        </div>
+      </section>
+
+      <!-- PANEL LATERAL DERECHO (CONTROLES, DIDÁCTICA Y LABORATORIO) -->
+      <aside class="sidebar-panel" aria-label="Panel de configuración, laboratorio y mediciones">
+        
+        <!-- Pestañas de Navegación del Panel -->
+        <nav class="sidebar-tabs" role="tablist">
+          <button class="tab-btn active" role="tab" data-tab="controls" id="tabControlsBtn" aria-selected="true">Controles</button>
+          <button class="tab-btn" role="tab" data-tab="config" id="tabConfigBtn" aria-selected="false">Configuración</button>
+          <button class="tab-btn" role="tab" data-tab="didactic" id="tabDidacticBtn" aria-selected="false">Didáctica</button>
+          <button class="tab-btn" role="tab" data-tab="lab" id="tabLabBtn" aria-selected="false">Laboratorio</button>
+          <button class="tab-btn" role="tab" data-tab="export" id="tabExportBtn" aria-selected="false">Datos</button>
+        </nav>
+
+        <div class="sidebar-content">
+          
+          <!-- PESTAÑA 1: CONTROLES FÍSICOS Y PRESETS RÁPIDOS -->
+          <div id="tab-controls" class="tab-pane" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            
+            <!-- Presets rápidos de 1 clic -->
+            <div class="control-section">
+              <div class="section-title">
+                <span>Casos Preconfigurados</span>
+                <span style="font-size: 0.72rem; color: var(--text-accent);">1 Clic</span>
+              </div>
+              <div class="btn-grid" style="grid-template-columns: repeat(2, 1fr); gap: 0.45rem;">
+                <button class="preset-chip-btn active" data-preset="rest">1. Ambos en reposo</button>
+                <button class="preset-chip-btn" data-preset="src-approach">2. Fuente se aproxima</button>
+                <button class="preset-chip-btn" data-preset="src-recede">3. Fuente se aleja</button>
+                <button class="preset-chip-btn" data-preset="obs-approach">4. Observador aproxima</button>
+                <button class="preset-chip-btn" data-preset="obs-recede">5. Observador aleja</button>
+                <button class="preset-chip-btn" data-preset="both-moving">6. Ambos en avance</button>
+                <button class="preset-chip-btn" data-preset="mach-1">7. Mach 1 (Sónico)</button>
+                <button class="preset-chip-btn" data-preset="supersonic">8. Supersónico (M=1.5)</button>
+              </div>
+            </div>
+
+            <!-- Parámetros del Medio y Emisor -->
+            <div class="control-section">
+              <div class="section-title">
+                <span>Parámetros Físicos</span>
+                <span style="font-size: 0.72rem; color: var(--text-accent);">Sistema Internacional</span>
+              </div>
+
+              <!-- Frecuencia emitida (f) -->
+              <div class="control-card">
+                <div class="control-row">
+                  <div class="control-label-row">
+                    <label for="sliderFreq">Frecuencia emitida (f)</label>
+                    <span class="control-val-badge"><span id="badgeFreq">2.0</span> Hz</span>
+                  </div>
+                  <div class="slider-input-group">
+                    <input type="range" id="sliderFreq" class="form-slider" min="0.5" max="5.0" step="0.1" value="2.0">
+                    <input type="number" id="inputFreq" class="form-number-input" min="0.1" max="20" step="0.1" value="2.0">
+                  </div>
+                  <small style="font-size: 0.72rem; color: var(--text-muted);">Frecuencia visual sugerida a 2 Hz para observar y contar cada frente.</small>
+                </div>
+
+                <!-- Rapidez del sonido (c) -->
+                <div class="control-row">
+                  <div class="control-label-row">
+                    <label for="sliderC">Rapidez de propagación (c)</label>
+                    <span class="control-val-badge"><span id="badgeC">340</span> m/s</span>
+                  </div>
+                  <div class="slider-input-group">
+                    <input type="range" id="sliderC" class="form-slider" min="100" max="500" step="10" value="340">
+                    <input type="number" id="inputC" class="form-number-input" min="50" max="1000" step="10" value="340">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Velocidades de Fuente y Observador -->
+              <div class="control-card">
+                <!-- Velocidad Fuente (vf) -->
+                <div class="control-row">
+                  <div class="control-label-row">
+                    <label for="sliderVfx" style="color: var(--accent-source); font-weight: 600;">Velocidad Fuente (v_f)</label>
+                    <span class="control-val-badge"><span id="badgeVfx">0</span> m/s</span>
+                  </div>
+                  <div class="slider-input-group">
+                    <input type="range" id="sliderVfx" class="form-slider" min="-680" max="680" step="10" value="0">
+                    <input type="number" id="inputVfx" class="form-number-input" min="-1000" max="1000" step="10" value="0">
+                  </div>
+                </div>
+
+                <!-- Velocidad Observador (vo) -->
+                <div class="control-row">
+                  <div class="control-label-row">
+                    <label for="sliderVox" style="color: var(--accent-observer); font-weight: 600;">Velocidad Observador (v_o)</label>
+                    <span class="control-val-badge"><span id="badgeVox">0</span> m/s</span>
+                  </div>
+                  <div class="slider-input-group">
+                    <input type="range" id="sliderVox" class="form-slider" min="-272" max="272" step="5" value="0">
+                    <input type="number" id="inputVox" class="form-number-input" min="-300" max="300" step="5" value="0">
+                  </div>
+                </div>
+
+                <!-- Duración del experimento -->
+                <div class="control-row">
+                  <div class="control-label-row">
+                    <label for="sliderDuration">Duración Total</label>
+                    <span class="control-val-badge"><span id="badgeDuration">10</span> s</span>
+                  </div>
+                  <div class="slider-input-group">
+                    <input type="range" id="sliderDuration" class="form-slider" min="2" max="30" step="1" value="10">
+                    <input type="number" id="inputDuration" class="form-number-input" min="1" max="60" step="1" value="10">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PESTAÑA 2: CONFIGURACIÓN VISUAL, AVATARES Y AUDIO -->
+          <div id="tab-config" class="tab-pane" style="display: none; flex-direction: column; gap: 1.25rem;">
+            
+            <div class="control-section">
+              <div class="section-title">Apariencia y Modelado Visual</div>
+              <div class="control-card">
+                <div class="control-row">
+                  <label for="selectAvatar" style="font-size: 0.8rem; color: var(--text-secondary);">Avatar de la Fuente</label>
+                  <select id="selectAvatar" class="speed-select" style="width: 100%;">
+                    <option value="point">Punto Emisor Didáctico</option>
+                    <option value="car">Automóvil / Ambulancia con Sirena</option>
+                    <option value="plane">Avión Caza Supersónico</option>
+                  </select>
+                </div>
+
+                <div class="control-row">
+                  <label for="selectWaveStyle" style="font-size: 0.8rem; color: var(--text-secondary);">Trazo de los Frentes de Onda</label>
+                  <select id="selectWaveStyle" class="speed-select" style="width: 100%;">
+                    <option value="solid">Línea Continua</option>
+                    <option value="dashed">Línea Discontinua (Segmentos)</option>
+                    <option value="dotted">Línea Punteada</option>
+                  </select>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 6px;">
+                  <label style="font-size: 0.82rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="checkFadeWaves" checked> Atenuación gráfica visual (desvanecimiento)
+                  </label>
+                  <label style="font-size: 0.82rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="checkShowVectors" checked> Mostrar vectores de velocidad (v_f, v_o)
+                  </label>
+                  <label style="font-size: 0.82rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="checkMode2D"> Activar Espacio Bidimensional (2D)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sonificación Acústica -->
+            <div class="control-section">
+              <div class="section-title">Sonificación Web Audio</div>
+              <div class="control-card">
+                <div class="control-row">
+                  <label for="selectAudioMode" style="font-size: 0.8rem; color: var(--text-secondary);">Modalidad de Sonido</label>
+                  <select id="selectAudioMode" class="speed-select" style="width: 100%;">
+                    <option value="pulses">Pulsos de Llegada (Beep breve por evento)</option>
+                    <option value="continuous">Comparación Tonal (Tono continuo modulado fo/fe)</option>
+                  </select>
+                </div>
+                <div class="control-row">
+                  <div class="control-label-row">
+                    <label for="sliderVolume" style="font-size: 0.8rem;">Volumen</label>
+                  </div>
+                  <input type="range" id="sliderVolume" class="form-slider" min="0" max="1" step="0.05" value="0.5">
+                </div>
+                <small style="font-size: 0.72rem; color: var(--text-muted);">
+                  El audio se activa con el botón de altavoz en el encabezado. Se detiene automáticamente al pausar.
+                </small>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PESTAÑA 3: DIDÁCTICA Y ESCENARIO ACTIVO -->
+          <div id="tab-didactic" class="tab-pane" style="display: none; flex-direction: column; gap: 1.25rem;">
+            <div class="scenario-guidance-box">
+              <div class="scenario-guidance-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span id="activeScenarioTitle">1. Fuente y observador inmóviles</span>
+              </div>
+              <p style="font-size: 0.82rem; margin-top: 4px;" id="activeScenarioObjective">
+                Comprobar que en reposo la longitud de onda en el medio es constante en todas las direcciones y la frecuencia percibida es exactamente igual a la emitida.
+              </p>
+            </div>
+
+            <div class="control-card">
+              <div class="section-title">Procedimiento Sugerido</div>
+              <p style="font-size: 0.82rem; color: var(--text-secondary);" id="activeScenarioProcedure">
+                Inicia la simulación con el botón Play. Observa cómo viajan los frentes y el momento exacto en el que el primer círculo toca al observador.
+              </p>
+            </div>
+
+            <div class="control-card">
+              <div class="section-title">Pregunta de Comprobación</div>
+              <div id="activeScenarioQuiz">
+                <!-- Inyectado dinámicamente por DopplerUI -->
+              </div>
+            </div>
+          </div>
+
+          <!-- PESTAÑA 4: LABORATORIO, MATEMÁTICAS Y GRÁFICAS -->
+          <div id="tab-lab" class="tab-pane" style="display: none; flex-direction: column; gap: 1.25rem;">
+            
+            <!-- Panel de Fórmulas y LaTeX -->
+            <div class="math-container">
+              <div class="section-title">Ecuación Teórica del Efecto Doppler</div>
+              <div id="mathFormulaKaTeX" class="math-formula-box">
+                <!-- Renderizado por KaTeX -->
+                f_o = f_e \cdot \left( \frac{c - v_o}{c - v_f} \right)
+              </div>
+              <div id="mathDynamicSubstitution" class="math-substitution-box">
+                Cargando sustitución numérica...
+              </div>
+            </div>
+
+            <!-- Gráfica Sincronizada -->
+            <div class="chart-container">
+              <div class="chart-header">
+                <span class="chart-title">Frecuencia Observada vs Tiempo f_o(t)</span>
+                <span style="font-size: 0.72rem; color: var(--accent-success);">● f_medida experimental</span>
+              </div>
+              <canvas id="chartCanvas" class="chart-canvas" width="340" height="140"></canvas>
+            </div>
+
+            <!-- Telemetría y Mediciones -->
+            <div class="telemetry-grid">
+              <div class="telemetry-card highlight-source">
+                <span class="telemetry-label">Número de Mach (M)</span>
+                <span id="telemetryMach" class="telemetry-value">0.00</span>
+                <span id="telemetryMachAngle" class="telemetry-sub">Subsónico</span>
+              </div>
+
+              <div class="telemetry-card highlight-observer">
+                <span class="telemetry-label">Longitud de Onda λ_0</span>
+                <span id="telemetryLambda0" class="telemetry-value">170.0 m</span>
+                <span class="telemetry-sub">En el medio en reposo</span>
+              </div>
+
+              <div class="telemetry-card highlight-measure">
+                <span class="telemetry-label">λ Delante de la Fuente</span>
+                <span id="telemetryLambdaAhead" class="telemetry-value">170.0 m</span>
+                <span class="telemetry-sub">Compresión espacial</span>
+              </div>
+
+              <div class="telemetry-card highlight-measure">
+                <span class="telemetry-label">λ Detrás de la Fuente</span>
+                <span id="telemetryLambdaBehind" class="telemetry-value">170.0 m</span>
+                <span class="telemetry-sub">Dilatación espacial</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PESTAÑA 5: EXPORTACIÓN Y DATOS -->
+          <div id="tab-export" class="tab-pane" style="display: none; flex-direction: column; gap: 1.25rem;">
+            <div class="control-card">
+              <div class="section-title">Registro de Eventos y Mediciones</div>
+              <p style="font-size: 0.82rem; color: var(--text-secondary);">
+                Descarga las tablas exactas de instantes de emisión (t_e), instantes analíticos de recepción (t_r), intervalos entre llegadas (Δt_r) y frecuencias calculadas.
+              </p>
+              <button id="btnExportCSV" class="btn-pill btn-primary-pill" style="justify-content: center; margin-top: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar Datos a CSV
+              </button>
+            </div>
+
+            <div class="control-card">
+              <div class="section-title">Captura Visual del Lienzo</div>
+              <p style="font-size: 0.82rem; color: var(--text-secondary);">
+                Guarda una instantánea en alta resolución con el estado actual de los frentes, posiciones y vectores.
+              </p>
+              <button id="btnExportPNG" class="btn-pill" style="justify-content: center; margin-top: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Descargar Captura PNG
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+    </main>
+
+    <!-- BARRA INFERIOR DE TRANSPORTE TEMPORAL -->
+    <footer class="transport-bar" role="region" aria-label="Controles de reproducción temporal">
+      <div class="transport-controls">
+        <button id="btnReset" class="btn-transport" title="Reiniciar al instante t = 0 (R)" aria-label="Reiniciar simulación">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        </button>
+        <button id="btnStepBack" class="btn-transport" title="Retroceder una subdivisión (←)" aria-label="Paso atrás">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>
+        </button>
+        <button id="btnPlayPause" class="btn-transport play-btn" title="Iniciar / Pausar simulación (Espacio)" aria-label="Iniciar simulación">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </button>
+        <button id="btnStepForward" class="btn-transport" title="Avanzar una subdivisión (→)" aria-label="Paso adelante">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+        </button>
+        <button id="btnStepPeriod" class="btn-transport" title="Avanzar un período completo T = 1/f" aria-label="Avanzar un período">
+          <span style="font-size: 0.78rem; font-weight: 700;">+T</span>
+        </button>
+      </div>
+
+      <div class="transport-slider-wrapper">
+        <span id="timeDisplay" class="time-display">0.00 s / 10.0 s</span>
+        <input type="range" id="scrubberSlider" class="scrubber-slider" min="0" max="10" step="0.005" value="0" aria-label="Línea de tiempo de la simulación">
+      </div>
+
+      <div class="transport-options">
+        <select id="speedSelect" class="speed-select" aria-label="Velocidad de reproducción">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1.0" selected>1.0× (Normal)</option>
+          <option value="2.0">2.0×</option>
+        </select>
+        <select id="subdivSelect" class="subdiv-select" aria-label="Subdivisiones por período">
+          <option value="20">20 pasos/T</option>
+          <option value="50">50 pasos/T</option>
+          <option value="100" selected>100 pasos/T</option>
+          <option value="200">200 pasos/T</option>
+        </select>
+      </div>
+    </footer>
+
+    <!-- MODAL: CATÁLOGO DE LOS 8 ESCENARIOS DIDÁCTICOS -->
+    <div id="modalScenarios" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalScenariosTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3 id="modalScenariosTitle" class="modal-title">Catálogo de Escenarios Guiados</h3>
+          <button id="btnCloseScenarios" class="btn-icon" aria-label="Cerrar ventana">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Selecciona un experimento preconfigurado para estudiar las propiedades esenciales del efecto Doppler:</p>
+          <div id="scenariosList" class="scenario-card-list">
+            <!-- Inyectado por DopplerUI -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: FUNDAMENTO TEÓRICO Y LÍMITES FÍSICOS -->
+    <div id="modalHelp" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalHelpTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3 id="modalHelpTitle" class="modal-title">Fundamentación Física y Límites del Modelo</h3>
+          <button id="btnCloseHelp" class="btn-icon" aria-label="Cerrar ventana">✕</button>
+        </div>
+        <div class="modal-body">
+          <h4>1. El Medio Acústico en Reposo</h4>
+          <p>
+            A diferencia de la luz en el vacío (que requiere relatividad especial), las ondas de sonido necesitan un medio elástico y deformable (en este simulador, aire homogéneo e inmóvil). La rapidez de propagación <em>c</em> es una propiedad intrínseca del medio, no de la velocidad del emisor.
+          </p>
+
+          <h4>2. Emisión y Centros de Frente Invariables</h4>
+          <p>
+            Cada frente de onda circular es emitido en un instante exacto $t_{e,n} = n/f$. Una vez desprendido de la fuente, el centro del círculo permanece rígidamente fijado en las coordenadas del medio donde ocurrió la emisión. El frente no acompaña el movimiento posterior de la fuente.
+          </p>
+
+          <h4>3. Detección Analítica de Cruce</h4>
+          <p>
+            El observador detecta una perturbación cuando la distancia euclidiana entre su posición en el instante de recepción $t_r$ y el centro del frente coincide con el radio acústico expandido: $|\mathbf{x}_o(t_r) - \mathbf{x}_c| = c(t_r - t_e)$.
+          </p>
+
+          <h4>4. Régimen Sónico y Supersónico</h4>
+          <p>
+            Cuando la fuente supera la velocidad del sonido ($M = v_f/c > 1$), los frentes quedan envueltos dentro de una superficie cónica con semiángulo $\mu = \arcsin(1/M)$. La fórmula Doppler lineal convencional presenta singularidades que no deben interpretarse como tonos de audio infinitos.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT PRINCIPAL: Bundle Standalone (Cero problemas CORS con doble clic local file:// y HTTP) -->
+  <script src="js/doppler-bundle.js"></script>
+</body>
+</html>

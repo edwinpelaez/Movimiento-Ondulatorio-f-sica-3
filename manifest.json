@@ -1,0 +1,18 @@
+{
+  "name": "Física 3: Movimiento Ondulatorio - Cuaderno Virtual Universitario",
+  "short_name": "Física 3 Ondas",
+  "description": "Cuaderno virtual interactivo universitario de Física 3 dedicado al movimiento ondulatorio, superposición, acústica y óptica.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#1e3a8a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "Imagenes/Portada.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
